@@ -1,4 +1,4 @@
-<h1 align="center">Hi, I'm Ehsan 👋</h1>
+<h1 align="center">اَلسَلامُ عَلَيْكُم وَرَحْمَةُ اَللهِ وَبَرَكاتُهُ, I'm Ehsan 👋</h1>
 <p align="center">
   Computer Engineering student at the <b>American University of Sharjah</b><br/>
   Building at the intersection of <b>AI</b> and <b>hardware</b>: computer vision, deep learning, and digital systems.
