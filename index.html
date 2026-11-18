@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ehsan's Projects</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: one centred column. Intro, then a card per vibe-coded project with its preview and an open button. */
+:root{--bg:#eef1f5;--surface:#fff;--ink:#0f172a;--muted:#475569;--accent:#2563eb;--line:oklch(0.25 0.02 255 / 0.12);
+  --shadow:0 0 0 1px oklch(0 0 0 / .06),0 1px 2px -1px oklch(0 0 0 / .06),0 2px 4px 0 oklch(0 0 0 / .04);--sans:"Geist",system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+main{max-width:880px;margin:0 auto;padding:56px 20px 64px;display:grid;gap:28px}
+h1{font:700 32px/1.15 var(--sans);letter-spacing:-.02em;margin:0;text-wrap:balance}
+.lead{color:var(--muted);margin:8px 0 0;max-width:62ch}
+h2{font:600 13px var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0}
+.card{background:var(--surface);border:1px solid transparent;box-shadow:var(--shadow);border-radius:20px;padding:8px;display:grid;gap:0}
+.card img{display:block;width:100%;height:auto;border-radius:12px;outline:1px solid oklch(0 0 0 / .1);outline-offset:-1px}
+.body{padding:18px 16px 14px;display:grid;gap:10px}
+.body h3{font:600 20px/1.25 var(--sans);margin:0;letter-spacing:-.01em}
+.body p{margin:0;color:var(--muted);max-width:68ch}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tags span{font:500 12.5px var(--sans);color:#334155;background:#e2e7ee;border-radius:999px;padding:2px 10px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+a.btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font:600 14px var(--sans);border-radius:8px;padding:9px 16px;transition-property:scale,background-color;transition-duration:150ms;transition-timing-function:ease-out}
+a.primary{background:var(--accent);color:#fff}
+a.ghost{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+@media (hover:hover){a.primary:hover{background:#1d4fd8}a.ghost:hover{background:#f5f7fa}}
+a.btn:active{scale:.96}
+@media (prefers-reduced-motion:reduce){a.btn:active{scale:1}}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+footer{color:var(--muted);font-size:14px}
+footer a{color:var(--accent)}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Ehsan's projects</h1>
+    <p class="lead">Computer Engineering student at the American University of Sharjah. Here are the things I've built and vibe-coded.</p>
+  </header>
+  <h2>Cool vibe-coded projects</h2>
+  <article class="card">
+    <a href="vibe-coded/ele211-lab-simulator/"><img src="vibe-coded/ele211-lab-simulator/preview.png" alt="ELE 211L Lab Simulator: 3D NI ELVIS II+ bench with a wired breadboard" width="1200" height="1083"></a>
+    <div class="body">
+      <h3>ELE 211L Lab Simulator</h3>
+      <p>An NI ELVIS II+ workstation in the browser. You wire a breadboard, probe it with the DMM and scope, and run DC, RC-transient and AC experiments. A real circuit solver computes the readings.</p>
+      <div class="tags"><span>Circuit solver</span><span>3D bench</span><span>ELVISmx panels</span><span>HTML · SVG · Canvas</span></div>
+      <div class="actions">
+        <a class="btn primary" href="vibe-coded/ele211-lab-simulator/">Open simulator →</a>
+        <a class="btn ghost" href="https://github.com/3HSANN/3HSANN/tree/main/vibe-coded/ele211-lab-simulator">View source</a>
+      </div>
+    </div>
+  </article>
+  <footer>More on <a href="https://github.com/3HSANN">GitHub</a> · <a href="https://www.linkedin.com/in/ehsan-fijhas-476a3a297/">LinkedIn</a></footer>
+</main>
+</body>
+</html>

@@ -2,7 +2,7 @@
 
 A browser-based simulator of the **NI ELVIS II+** workstation for practising the ELE 211L (Electric Circuits I) lab final at the American University of Sharjah: DC measurements, Thevenin equivalents, RC transients and AC steady state.
 
-**[▶ Open the live simulator](https://claude.ai/artifact/Dd5CHjZdx84pdsnEH9Ccrs)**. You can also download `index.html` and open it in any browser. It's a single file with no build step.
+**[▶ Open the live simulator](https://3hsann.github.io/3HSANN/vibe-coded/ele211-lab-simulator/)**. You can also download `index.html` and open it in any browser. It's a single file with no build step.
 
 ![Lab bench view](preview.png)
 
