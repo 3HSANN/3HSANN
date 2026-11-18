@@ -45,6 +45,16 @@
 | [**Fashion-MNIST Classifier**](https://github.com/3HSANN/FASHION-MNIST-CLASSIFICATION) | 5-layer MLP with BatchNorm and Dropout, built from scratch in PyTorch | **~90%** validation accuracy |
 | [**10 Monkey Species CNN**](https://github.com/3HSANN/10_Monkeys_Species_Dataset_Classification_CNN) | Custom CNN trained from scratch with data augmentation and TensorBoard logging | **~76%** validation accuracy |
 
+### ✨ Cool vibe-coded projects
+
+| Project | Description | Links |
+|---|---|---|
+| [**ELE 211L Lab Simulator**](vibe-coded/ele211-lab-simulator) | A 3D NI ELVIS II+ bench in the browser: wire a breadboard, probe with the DMM and scope, and run DC, RC-transient and AC experiments with a real circuit solver | [▶ Live demo](https://claude.ai/artifact/Dd5CHjZdx84pdsnEH9Ccrs) · [Source](vibe-coded/ele211-lab-simulator) |
+
+<p align="center">
+  <a href="https://claude.ai/artifact/Dd5CHjZdx84pdsnEH9Ccrs"><img src="vibe-coded/ele211-lab-simulator/preview.png" width="720" alt="ELE 211L Lab Simulator: 3D NI ELVIS II+ bench"/></a>
+</p>
+
 ### 📈 GitHub stats
 
 <p align="center">
