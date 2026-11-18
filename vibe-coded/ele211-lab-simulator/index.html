@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ELE 211L Practice Lab Bench</title>
+<title>ELE 211L Lab Simulator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -987,6 +987,8 @@ const GC=(window.ANALYTICS||{}).goatcounter,hosted=/^https?:$/.test(location.pro
 const track=(name)=>{try{if(window.goatcounter&&window.goatcounter.count)window.goatcounter.count({path:"event/"+name,title:name,event:true});}catch(e){}};
 if(GC&&hosted){
   const sc=document.createElement("script");sc.async=true;sc.src="https://gc.zgo.at/count.js";sc.dataset.goatcounter=`https://${GC}.goatcounter.com/count`;document.head.append(sc);
+  // fallback: if a blocker stops count.js, send GoatCounter's no-JS pixel instead
+  setTimeout(()=>{if(window.goatcounter&&window.goatcounter.count)return;const q=new URLSearchParams({p:location.pathname,t:document.title,r:document.referrer||"",s:screen.width+","+screen.height});const img=new Image();img.src=`https://${GC}.goatcounter.com/count?${q}`;},3000);
   if(window.ANALYTICS.showCount)fetch(`https://${GC}.goatcounter.com/counter/TOTAL.json`).then(r=>r.ok?r.json():null).then(d=>{if(d&&d.count){$("visits").textContent=`👥 ${d.count} visits`;$("visits").hidden=false;}}).catch(()=>{});
 }
 // usage events: which tools people actually use
