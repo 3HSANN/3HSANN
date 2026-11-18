@@ -112,6 +112,8 @@ svg#bb{display:block;width:100%;height:auto;touch-action:none;user-select:none;-
 .ro2 .ch{display:flex;align-items:baseline;gap:5px}.ro2 .ch b{font:700 11px var(--mono)}
 .ro2.warn{background:color-mix(in oklab,var(--bad) 9%,white);border-color:color-mix(in oklab,var(--bad) 30%,white);color:var(--bad);font:500 12.5px var(--sans);white-space:normal;min-width:220px}
 .pill{align-self:center}
+.sbwrap{max-width:1500px;margin:0 auto;display:flex;align-items:center;gap:10px;padding-right:20px}.sbwrap .pcstrip{flex:1;margin:0}
+.pill.visits{white-space:nowrap;color:#334155;background:#e2e7ee}
 .pill{display:inline-flex;align-items:center;gap:6px;font:500 12px var(--sans);padding:2px 9px;border-radius:999px;background:var(--sunken);color:var(--muted)}
 .pill i{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block}
 .pill.on{color:var(--good);background:color-mix(in oklab,var(--good) 13%,transparent)}
@@ -192,6 +194,14 @@ details p{font-size:13px;color:var(--muted);margin:6px 0}
 </style>
 </head>
 <body>
+<script>
+/* ===== Visitor tracking (GoatCounter: free, no cookies) =====
+   1. Sign up at https://www.goatcounter.com and pick a code, e.g. "ele211sim"
+   2. Put that code below. Leave it empty to turn tracking off.
+   3. To show the visit count on the page: GoatCounter Settings → tick
+      "Allow adding visitor counts on your website". */
+window.ANALYTICS={goatcounter:"",showCount:true};
+</script>
 <div class="app">
 <header class="topbar"><div class="topbar-in">
   <div class="brand"><div class="brand-mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 12c2.5-6 5-6 7.5 0s5 6 7.5 0 3.5-4 5-2" stroke-linecap="round"/></svg></div>
@@ -379,7 +389,7 @@ details p{font-size:13px;color:var(--muted);margin:6px 0}
     <section class="panel" id="wsPanel"></section>
   </section>
 </main>
-<footer class="statusbar"><div class="pcstrip" id="pcstrip"></div></footer>
+<footer class="statusbar"><div class="sbwrap"><div class="pcstrip" id="pcstrip"></div><span class="pill visits" id="visits" hidden></span></div></footer>
 </div>
 
 <script>
@@ -967,6 +977,18 @@ document.querySelectorAll("[data-sw]").forEach(b=>b.onclick=()=>{$("wColor").val
 document.addEventListener("keydown",e=>{if(/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)||e.metaKey||e.ctrlKey||e.altKey)return;
   const m={"1":"bench","2":"pc","3":"sheet"}[e.key];if(m){$("mt-"+m).click();return;}
   if(e.key==="v"||e.key==="V"){(TILT.on?$("vflat"):$("v3d")).click();}});
+
+// ---------- analytics (only active when a GoatCounter code is set and the page is hosted, e.g. GitHub Pages) ----------
+const GC=(window.ANALYTICS||{}).goatcounter,hosted=/^https?:$/.test(location.protocol)&&!/claude\.ai|claudeusercontent|localhost/.test(location.hostname);
+const track=(name)=>{try{if(window.goatcounter&&window.goatcounter.count)window.goatcounter.count({path:"event/"+name,title:name,event:true});}catch(e){}};
+if(GC&&hosted){
+  const sc=document.createElement("script");sc.async=true;sc.src="https://gc.zgo.at/count.js";sc.dataset.goatcounter=`https://${GC}.goatcounter.com/count`;document.head.append(sc);
+  if(window.ANALYTICS.showCount)fetch(`https://${GC}.goatcounter.com/counter/TOTAL.json`).then(r=>r.ok?r.json():null).then(d=>{if(d&&d.count){$("visits").textContent=`👥 ${d.count} visits`;$("visits").hidden=false;}}).catch(()=>{});
+}
+// usage events: which tools people actually use
+[["chkC","check-circuit"],["autoB","auto-build"],["mt-pc","open-computer-screen"],["mt-sheet","open-lab-sheet"],["autoS","scope-autoscale"],["bReal","real-parts"]].forEach(([id,n])=>$(id)?.addEventListener("click",()=>track(n)));
+document.querySelectorAll("[data-part]").forEach(b=>b.addEventListener("click",()=>track("experiment-"+b.dataset.part)));
+document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#chk"))track("check-worksheet");});
 window.__bench={get parts(){return parts},get wires(){return wires},get power(){return power},set power(v){power=v;recompute();},get fgRun(){return fgRun},set fgRun(v){fgRun=v;recompute();},HID,simTime:()=>{const t=performance.now();simulate(LASTM);return performance.now()-t;},recTime:()=>{const t=performance.now();recompute();return performance.now()-t;},TILT,get part(){return part},autoBuild,recompute,DM:()=>DM,STATUS:()=>STATUS,TRACE:()=>TRACE,svgPt,PTS,setMode:m=>{dmmMode=m;recompute();},FG,setPart:p=>{part=p;}};
 })();
 </script>

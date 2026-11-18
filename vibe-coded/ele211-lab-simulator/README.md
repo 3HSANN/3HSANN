@@ -25,4 +25,27 @@ A browser-based simulator of the **NI ELVIS II+** workstation for practising the
 | τ = Rth·C | 0.414 ms | 0.414 ms |
 | Vc at 1 kHz | 2.36 Vpp, −69° | same |
 
+## Host it on GitHub Pages
+
+1. In this repo go to **Settings → Pages**.
+2. Under **Build and deployment**, set **Source: Deploy from a branch**, **Branch: `main`**, folder **`/ (root)`**, then **Save**.
+3. After a minute the simulator is live at
+   **https://3hsann.github.io/3HSANN/vibe-coded/ele211-lab-simulator/**
+
+## Visitor tracking
+
+The page has [GoatCounter](https://www.goatcounter.com) built in. It's free and open source, and it doesn't use cookies, so you don't need a consent banner.
+
+1. Sign up at goatcounter.com and choose a site code, for example `ele211sim`. Your dashboard will be at `https://ele211sim.goatcounter.com`.
+2. In `index.html`, set the code near the top of `<body>`:
+   ```js
+   window.ANALYTICS={goatcounter:"ele211sim",showCount:true};
+   ```
+3. Optional: to show the live count (👥 N visits) in the status bar, go to GoatCounter **Settings** and tick *Allow adding visitor counts on your website*.
+
+Besides page views and unique visitors (with their country, browser and screen size), the dashboard shows which tools people use. These appear as events:
+`check-circuit`, `auto-build`, `experiment-dc/tr/ac`, `open-computer-screen`, `open-lab-sheet`, `check-worksheet`, `scope-autoscale`, `real-parts`.
+
+Tracking only runs on the hosted page. It stays off when you open the file locally or view the claude.ai preview.
+
 Built with plain HTML, SVG, Canvas and JavaScript (no frameworks). Vibe-coded with Claude.
