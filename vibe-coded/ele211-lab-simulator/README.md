@@ -36,10 +36,10 @@ A browser-based simulator of the **NI ELVIS II+** workstation for practising the
 
 The page has [GoatCounter](https://www.goatcounter.com) built in. It's free and open source, and it doesn't use cookies, so you don't need a consent banner.
 
-1. Sign up at goatcounter.com and choose a site code, for example `ele211sim`. Your dashboard will be at `https://ele211sim.goatcounter.com`.
-2. In `index.html`, set the code near the top of `<body>`:
+1. This site uses the code `3hsannn`. The dashboard is at `https://3hsannn.goatcounter.com`.
+2. The code is set near the top of `<body>` in `index.html`:
    ```js
-   window.ANALYTICS={goatcounter:"ele211sim",showCount:true};
+   window.ANALYTICS={goatcounter:"3hsannn",showCount:true};
    ```
 3. Optional: to show the live count (👥 N visits) in the status bar, go to GoatCounter **Settings** and tick *Allow adding visitor counts on your website*.
 
