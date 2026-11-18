@@ -112,6 +112,9 @@ svg#bb{display:block;width:100%;height:auto;touch-action:none;user-select:none;-
 .ro2 .ch{display:flex;align-items:baseline;gap:5px}.ro2 .ch b{font:700 11px var(--mono)}
 .ro2.warn{background:color-mix(in oklab,var(--bad) 9%,white);border-color:color-mix(in oklab,var(--bad) 30%,white);color:var(--bad);font:500 12.5px var(--sans);white-space:normal;min-width:220px}
 .pill{align-self:center}
+.credits{max-width:1500px;width:100%;margin:0 auto;padding:4px 20px 18px;display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px;font:400 13px var(--sans);color:#475569}
+.credits b{color:var(--ink);font-weight:600}
+.credits span{color:var(--faint)}
 .sbwrap{max-width:1500px;margin:0 auto;display:flex;align-items:center;gap:10px;padding-right:20px}.sbwrap .pcstrip{flex:1;margin:0}
 .pill.visits{white-space:nowrap;color:#334155;background:#e2e7ee}
 .pill{display:inline-flex;align-items:center;gap:6px;font:500 12px var(--sans);padding:2px 9px;border-radius:999px;background:var(--sunken);color:var(--muted)}
@@ -389,6 +392,7 @@ window.ANALYTICS={goatcounter:"3hsannn",showCount:true};
     <section class="panel" id="wsPanel"></section>
   </section>
 </main>
+<div class="credits">Prompted, designed and built by <b>Ehsan Fijhas</b><span aria-hidden="true">·</span>Built with <b>Claude Opus 5.5</b></div>
 <footer class="statusbar"><div class="sbwrap"><div class="pcstrip" id="pcstrip"></div><span class="pill visits" id="visits" hidden></span></div></footer>
 </div>
 
