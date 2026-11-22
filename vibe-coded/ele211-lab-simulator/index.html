@@ -384,7 +384,8 @@ window.ANALYTICS={goatcounter:"3hsannn",showCount:true};
                   </div>
                   <div class="grp"><span class="gl">Cursors</span>
                     <div class="kv2"><label for="curOn">Cursors On</label><input type="checkbox" id="curOn" checked></div>
-                    <div class="kv2"><label for="curCh">Channel</label><select id="curCh"><option value="1">CH 1</option><option value="0">CH 0</option></select></div>
+                    <div class="kv2"><label for="c1Ch">C1 channel</label><select id="c1Ch"><option value="0">CH 0</option><option value="1">CH 1</option></select></div>
+                    <div class="kv2"><label for="c2Ch">C2 channel</label><select id="c2Ch"><option value="1">CH 1</option><option value="0">CH 0</option></select></div>
                     <div class="row" style="gap:4px"><span class="hint2">C1</span><button class="wbtn" data-nudge="0,-1" aria-label="C1 left">◀</button><button class="wbtn" data-nudge="0,1" aria-label="C1 right">▶</button><span class="hint2" style="margin-left:4px">C2</span><button class="wbtn" data-nudge="1,-1" aria-label="C2 left">◀</button><button class="wbtn" data-nudge="1,1" aria-label="C2 right">▶</button></div>
                   </div>
                   <div class="sfpbtns"><button id="autoS">Autoscale</button><button id="scRunB" aria-pressed="true">Run</button><button id="scStopB" aria-pressed="false">Stop</button></div>
@@ -847,11 +848,11 @@ function drawScope(){
     cx.fillStyle=col[trS];cx.fillText("◂T",W-48,y(lvl,trS)+8);}
   else{cx.fillStyle="#9aa4ae";cx.fillText("Trigger: Immediate",W-280,24);}
   if(TRACE.bad){cx.fillStyle="#ff6b6b";cx.fillText("Circuit fault: see the bench",W*0.28,H/2-20);}
-  const cc=+$("curCh").value,ts=t=>Math.abs(t)>=1e-3?(t*1e3).toFixed(3)+" ms":(t*1e6).toFixed(1)+" µs";
-  const cr=curs.map(f=>{const t=t0+f*10*tb;return{t:t-(t0+tb),v:sampleAt(arrs[cc],T,t)};});
+  const cch=[+$("c1Ch").value,+$("c2Ch").value],ts=t=>Math.abs(t)>=1e-3?(t*1e3).toFixed(3)+" ms":(t*1e6).toFixed(1)+" µs";
+  const cr=curs.map((f,i)=>{const t=t0+f*10*tb;return{t:t-(t0+tb),v:sampleAt(arrs[cch[i]],T,t)};});
   if($("curOn").checked){cx.setLineDash([10,8]);cx.lineWidth=1.8;
-    curs.forEach((f,i)=>{cx.strokeStyle="#e6eaef";cx.beginPath();cx.moveTo(f*W,0);cx.lineTo(f*W,H);cx.stroke();cx.fillStyle="#e6eaef";cx.fillText("C"+(i+1),f*W+6,H-12);
-      cx.setLineDash([]);cx.beginPath();cx.arc(f*W,y(cr[i].v,cc),7,0,7);cx.stroke();cx.setLineDash([10,8]);});cx.setLineDash([]);}
+    curs.forEach((f,i)=>{cx.strokeStyle="#e6eaef";cx.beginPath();cx.moveTo(f*W,0);cx.lineTo(f*W,H);cx.stroke();cx.fillStyle="#e6eaef";cx.fillText(`C${i+1} (CH${cch[i]})`,f*W+6,H-12);
+      cx.setLineDash([]);cx.strokeStyle=cch[i]?"#5fd4ff":"#ffd34d";cx.beginPath();cx.arc(f*W,y(cr[i].v,cch[i]),8,0,7);cx.stroke();cx.setLineDash([10,8]);});cx.setLineDash([]);}
   const st=a=>{let mx=-1e9,mn=1e9,s=0;for(const v of a){if(v>mx)mx=v;if(v<mn)mn=v;s+=v*v;}return{pp:mx-mn,rms:Math.sqrt(s/a.length)};};
   TRACE._st=TRACE._st||{};const sk=$("cp0").value+$("cp1").value;if(!TRACE._st[sk])TRACE._st[sk]=[st(arrs[0]),st(arrs[1])];const [m0,m1]=TRACE._st[sk],f=gen().f;
   $("meas").innerHTML=`<div><b style="color:#ffd34d">CH 0</b>RMS ${m0.rms.toFixed(3)} V · Freq ${f} Hz · Vp-p ${m0.pp.toFixed(3)} V</div><div><b style="color:#5fd4ff">CH 1</b>RMS ${m1.rms.toFixed(3)} V · Freq ${f} Hz · Vp-p ${m1.pp.toFixed(3)} V</div>
@@ -966,7 +967,7 @@ const HOW={
  ac:`<h2>Procedure (part 3)</h2><ol class="steps">
  <li>Same wiring as part 2. FGEN: <b>Sine, 1 kHz, 10 Vpp, 0 V offset</b>.</li>
  <li>CH 0 = Vs (reference), CH 1 = Vc. Trigger <b>Type = Edge</b>, Chan 0, Rising, level <b>0 V</b>. Read Vc's Vp-p.</li>
- <li>Zoom to 50–100 µs/div. C1 on a rising zero crossing of CH 0 (cursors on CH 0), then switch cursors to CH 1 and put C2 on Vc's next rising zero crossing.</li>
+ <li>Zoom to 50–100 µs/div. Set C1 channel to CH 0 and C2 channel to CH 1. Put C1 on CH 0's rising zero crossing and C2 on Vc's next rising zero crossing.</li>
  <li>Phase = dT × 360° × f. Vc is later, so it <b>lags</b>: enter a negative angle.</li></ol>
  <details><summary>Exam check: phasors</summary><p>Vc = k·Vs/(1 + jωRthC): |Vc| = k·10/√(1+(ωτ)²) Vpp, ∠Vc = −tan⁻¹(ωτ).</p></details>`};
 function renderSheet(){
@@ -1009,10 +1010,10 @@ const GUIDES={
    steps:["<b>RL removed.</b> Red plug in <b>A</b>, DMM on <b>A⎓</b>.","Probes across RL's terminals: <b>red on node C</b>, <b>black on ground</b>. The ammeter itself is the short circuit."],exp:"Isc"},
  Rth:{title:"Measure Rth (looking into RL's terminals)",part:"dc",do:()=>{pull("RL");const w=wires.find(w=>w.ends[0].pt===HID["+15V"]);if(w)w.ends[0].pt=HID["GROUND"];probe("h1a20","r1m4");dmm("R");},
    steps:["<b>RL removed.</b>","<b>Source replaced by a short:</b> the wire from +15V now comes from GROUND, so node A is tied to ground.","Red plug back in <b>VΩ</b>, DMM on <b>Ω</b>: red on node C, black on ground.","Check: Rth ≈ Voc ÷ Isc."],exp:"Rth"},
- tau:{title:"Measure τ (capacitor charging)",part:"tr",do:()=>{dmm("V");plug("J_V");scopeP("h1c2","h1d20");fgen("sq",50,10,5);scopeSet({tb:"0.001",v0:"2",v1:"1",trT:"edge",trS:"0",trSl:"rise",trL:"1",curCh:"1"});setCurs(0.1,0.1+0.0414);},
+ tau:{title:"Measure τ (capacitor charging)",part:"tr",do:()=>{dmm("V");plug("J_V");scopeP("h1c2","h1d20");fgen("sq",50,10,5);scopeSet({tb:"0.001",v0:"2",v1:"1",trT:"edge",trS:"0",trSl:"rise",trL:"1",c1Ch:"1",c2Ch:"1"});setCurs(0.1,0.1+0.0414);},
    steps:["RL swapped for the <b>1 µF capacitor</b>; source wire moved to <b>FGEN</b>.","<b>CH 0</b> clip on node A (Vs), <b>CH 1</b> clip on node C (Vc).","FGEN: <b>square, 50 Hz, 10 Vpp, 5 V offset</b> (so Vc starts at 0 V).","Scope: trigger <b>Edge, Chan 0, Rising, 1 V</b>; <b>1 ms/div</b>; cursors on CH 1.","On the <b>Computer screen</b>: C1 sits on the rising edge and C2 at about 0.63 × Vc-pp. <b>dT = τ</b>. Nudge C2 until its voltage reads 0.632 × Vc-pp."],exp:"tau"},
- ac:{title:"Measure |Vc| and phase at 1 kHz",part:"ac",do:()=>{dmm("V");plug("J_V");scopeP("h1c2","h1d20");fgen("sin",1000,10,0);scopeSet({tb:"0.0001",v0:"2",v1:"1",trT:"edge",trS:"0",trSl:"rise",trL:"0",curCh:"0"});},
-   steps:["Same circuit as part 2. FGEN: <b>sine, 1 kHz, 10 Vpp, 0 V offset</b>.","Scope: trigger <b>Edge, Chan 0, Rising, 0 V</b>; <b>100 µs/div</b>.","Read <b>CH 1 Vp-p</b> for |Vc|.","Put C1 on CH 0's rising zero crossing, switch cursors to CH 1 and put C2 on Vc's next rising zero crossing. Phase = −dT × 360° × f (Vc <b>lags</b>)."],exp:"ac"}};
+ ac:{title:"Measure |Vc| and phase at 1 kHz",part:"ac",do:()=>{dmm("V");plug("J_V");scopeP("h1c2","h1d20");fgen("sin",1000,10,0);scopeSet({tb:"0.0001",v0:"2",v1:"1",trT:"edge",trS:"0",trSl:"rise",trL:"0",c1Ch:"0",c2Ch:"1"});},
+   steps:["Same circuit as part 2. FGEN: <b>sine, 1 kHz, 10 Vpp, 0 V offset</b>.","Scope: trigger <b>Edge, Chan 0, Rising, 0 V</b>; <b>100 µs/div</b>.","Read <b>CH 1 Vp-p</b> for |Vc|.","Set <b>C1 channel = CH 0</b> and <b>C2 channel = CH 1</b>. Put C1 on CH 0's rising zero crossing and C2 on Vc's next rising zero crossing. Phase = −dT × 360° × f (Vc <b>lags</b>)."],exp:"ac"}};
 function probe(r,b){wires.find(w=>w.id==="L_red").ends[1].pt=r;wires.find(w=>w.id==="L_blk").ends[1].pt=b;}
 function plug(j){wires.find(w=>w.id==="L_red").ends[0].pt=j;}
 function part1(id,i,pt){parts.find(p=>p.id===id).ends[i].pt=pt;}
