@@ -90,6 +90,14 @@ details.help summary::-webkit-details-marker{display:none}
 @media (prefers-reduced-motion:no-preference){#tw{transition:transform 350ms cubic-bezier(0.2,0,0,1)}}
 svg#bb{display:block;width:100%;height:auto;touch-action:none;user-select:none;-webkit-user-select:none}
 #stage.tilt #tw{transform:perspective(2600px) rotateX(22deg)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.guide{border-left:0;display:grid;gap:8px}
+.guide .ghead{display:flex;justify-content:space-between;align-items:center}
+.guide h3{color:var(--accent);font-size:12px}
+.gsteps{margin:0;padding-left:20px;display:grid;gap:4px;font-size:14px;color:var(--ink)}
+.gsteps b{font-weight:600}
+.gexp{font:500 13.5px var(--sans);color:var(--muted)}
+.gexp b{font:600 15px var(--mono);color:var(--good)}
 .inspector{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:14px}
 @media (max-width:900px){.inspector{grid-template-columns:1fr}}
 .inspector .panel{padding:12px 14px;display:grid;gap:6px;align-content:start}
@@ -264,11 +272,19 @@ window.ANALYTICS={goatcounter:"3hsannn",showCount:true};
         <button id="clrW" class="ghost">Remove wires</button>
         <button id="resetAll" class="ghost">Reset</button>
         <span class="tsep"></span>
+        <label for="guideSel" class="sr-only">Guided setup</label>
+        <select id="guideSel" aria-label="Guided setup" style="font-family:var(--sans);font-weight:500">
+          <option value="">Guided setup…</option>
+          <optgroup label="Part 1 · DC"><option value="V1">Measure V1 (voltage)</option><option value="I1">Measure I1 (current)</option><option value="I2">Measure I2 (current)</option><option value="I3">Measure I3 (current)</option><option value="Voc">Measure Voc</option><option value="Isc">Measure Isc</option><option value="Rth">Measure Rth</option></optgroup>
+          <optgroup label="Part 2 · Transient"><option value="tau">Measure τ</option></optgroup>
+          <optgroup label="Part 3 · AC"><option value="ac">Measure magnitude and phase</option></optgroup>
+        </select>
         <button id="autoB" class="has-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3l1.8 4.7L18.5 9.5 13.8 11.3 12 16l-1.8-4.7L5.5 9.5l4.7-1.8z" stroke-linejoin="round"/></svg>Auto-build</button>
         <button class="primary has-icon" id="chkC"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Check circuit</button>
       </div>
     </div>
     <div id="stage" class="tilt"><div id="tw"><svg id="bb" viewBox="0 0 1500 1050" aria-label="NI ELVIS II+ workstation with prototyping board"></svg></div></div>
+    <div class="panel guide" id="guide" hidden><div class="ghead"><h3 id="gTitle">Guided setup</h3><button class="ghost" id="gClose">Hide</button></div><ol class="gsteps" id="gSteps"></ol><div class="gexp" id="gExp"></div></div>
     <div class="inspector">
       <div class="panel"><h3>Inspector</h3><div class="status" id="hover">Hover over a hole to see what it's connected to.</div><div class="warns" id="warns"></div></div>
       <div class="panel"><h3>Circuit check</h3><div id="checkOut"><span class="empty">Press Check circuit to compare your wiring with the schematic.</span></div></div>
@@ -976,6 +992,50 @@ for(const k in VIEWS)$("mt-"+k).onclick=()=>{for(const j in VIEWS){$(VIEWS[j]).h
 
 drawSch();renderSheet();recompute();
 
+
+// ================= guided setups =================
+const GUIDES={
+ V1:{title:"Measure V1 (across R1)",part:"dc",do:()=>{probe("h1c2","h1a8");dmm("V");},
+   steps:["DMM set to <b>V⎓</b>. Red plug in <b>VΩ</b>, black in <b>COM</b>.","Red probe on <b>node A</b> (row 3, the + end of R1), black probe on <b>node B</b> (row 9, the − end).","A voltmeter goes <b>across</b> the part (in parallel), so nothing gets unplugged."],exp:"V1"},
+ I1:{title:"Measure I1 (current through R1)",part:"dc",do:()=>{part1("R1",1,"h1b5");plug("J_A");probe("h1a5","h1a8");dmm("A");},
+   steps:["Red plug moved from VΩ to the <b>A</b> jack; DMM set to <b>A⎓</b>.","<b>Branch broken:</b> R1's lower lead pulled out of node B (row 9) into the empty <b>row 6</b>.","Meter bridges the gap: <b>red probe on row 6</b> (where the current comes out of R1 and enters the meter), <b>black probe on node B</b> (row 9).","All of I1 now has to flow through the meter, so it's <b>in series</b>."],exp:"I1"},
+ I2:{title:"Measure I2 (current through R2, arrow pointing up)",part:"dc",do:()=>{part1("R2",1,"h1d10");plug("J_A");probe("h1a12","h1a10");dmm("A");},
+   steps:["Red plug in <b>A</b>, DMM on <b>A⎓</b>.","<b>Branch broken:</b> R2's bottom lead moved from row 13 (which goes to ground) to the empty <b>row 11</b>.","I2's arrow points <b>up</b> (ground → B), so the meter is placed to read in that direction: <b>red on row 13</b> (ground side), <b>black on row 11</b>.","The real current flows <b>down</b> through R2, so the reading is <b>negative</b>. That's correct for this arrow."],exp:"I2"},
+ I3:{title:"Measure I3 (current through R3)",part:"dc",do:()=>{part1("R3",1,"h1c16");plug("J_A");probe("h1a16","h1a14");dmm("A");},
+   steps:["Red plug in <b>A</b>, DMM on <b>A⎓</b>.","<b>Branch broken:</b> R3's lead pulled out of node D (row 15) into the empty <b>row 17</b>.","<b>Red on row 17</b> (current leaving R3), <b>black on node D</b> (row 15)."],exp:"I3"},
+ Voc:{title:"Measure Voc (open-circuit voltage at RL)",part:"dc",do:()=>{pull("RL");probe("h1a20","r1m4");dmm("V");},
+   steps:["<b>RL removed</b> (back in the drawer), so terminals a–b are open.","DMM on <b>V⎓</b>, red in VΩ: <b>red on node C</b> (row 21), <b>black on ground</b> (blue rail)."],exp:"Voc"},
+ Isc:{title:"Measure Isc (short-circuit current at RL)",part:"dc",do:()=>{pull("RL");plug("J_A");probe("h1a20","r1m4");dmm("A");},
+   steps:["<b>RL removed.</b> Red plug in <b>A</b>, DMM on <b>A⎓</b>.","Probes across RL's terminals: <b>red on node C</b>, <b>black on ground</b>. The ammeter itself is the short circuit."],exp:"Isc"},
+ Rth:{title:"Measure Rth (looking into RL's terminals)",part:"dc",do:()=>{pull("RL");const w=wires.find(w=>w.ends[0].pt===HID["+15V"]);if(w)w.ends[0].pt=HID["GROUND"];probe("h1a20","r1m4");dmm("R");},
+   steps:["<b>RL removed.</b>","<b>Source replaced by a short:</b> the wire from +15V now comes from GROUND, so node A is tied to ground.","Red plug back in <b>VΩ</b>, DMM on <b>Ω</b>: red on node C, black on ground.","Check: Rth ≈ Voc ÷ Isc."],exp:"Rth"},
+ tau:{title:"Measure τ (capacitor charging)",part:"tr",do:()=>{dmm("V");plug("J_V");scopeP("h1c2","h1d20");fgen("sq",50,10,5);scopeSet({tb:"0.001",v0:"2",v1:"1",trT:"edge",trS:"0",trSl:"rise",trL:"1",curCh:"1"});setCurs(0.1,0.1+0.0414);},
+   steps:["RL swapped for the <b>1 µF capacitor</b>; source wire moved to <b>FGEN</b>.","<b>CH 0</b> clip on node A (Vs), <b>CH 1</b> clip on node C (Vc).","FGEN: <b>square, 50 Hz, 10 Vpp, 5 V offset</b> (so Vc starts at 0 V).","Scope: trigger <b>Edge, Chan 0, Rising, 1 V</b>; <b>1 ms/div</b>; cursors on CH 1.","On the <b>Computer screen</b>: C1 sits on the rising edge and C2 at about 0.63 × Vc-pp. <b>dT = τ</b>. Nudge C2 until its voltage reads 0.632 × Vc-pp."],exp:"tau"},
+ ac:{title:"Measure |Vc| and phase at 1 kHz",part:"ac",do:()=>{dmm("V");plug("J_V");scopeP("h1c2","h1d20");fgen("sin",1000,10,0);scopeSet({tb:"0.0001",v0:"2",v1:"1",trT:"edge",trS:"0",trSl:"rise",trL:"0",curCh:"0"});},
+   steps:["Same circuit as part 2. FGEN: <b>sine, 1 kHz, 10 Vpp, 0 V offset</b>.","Scope: trigger <b>Edge, Chan 0, Rising, 0 V</b>; <b>100 µs/div</b>.","Read <b>CH 1 Vp-p</b> for |Vc|.","Put C1 on CH 0's rising zero crossing, switch cursors to CH 1 and put C2 on Vc's next rising zero crossing. Phase = −dT × 360° × f (Vc <b>lags</b>)."],exp:"ac"}};
+function probe(r,b){wires.find(w=>w.id==="L_red").ends[1].pt=r;wires.find(w=>w.id==="L_blk").ends[1].pt=b;}
+function plug(j){wires.find(w=>w.id==="L_red").ends[0].pt=j;}
+function part1(id,i,pt){parts.find(p=>p.id===id).ends[i].pt=pt;}
+function pull(id){const p=parts.find(p=>p.id===id);p.ends.forEach((e,i)=>{e.pt=null;e.x=250+PARTDEF.indexOf(id)*140+i*100;e.y=965;});}
+function dmm(m){dmmMode=m;document.querySelectorAll("[data-dmm]").forEach(x=>x.setAttribute("aria-pressed",x.dataset.dmm===m));}
+function scopeP(a,c){wires.find(w=>w.id==="L_s0").ends[1].pt=a;wires.find(w=>w.id==="L_s1").ends[1].pt=c;}
+function fgen(w,f,A,o){FG.w=w;FG.f=f;FG.A=A;FG.o=o;fgRun=true;$("fgF").value=f;$("fgA").value=A;$("fgO").value=o;$("fgBig").textContent=f.toFixed(2);document.querySelectorAll("[data-wave]").forEach(x=>x.setAttribute("aria-pressed",x.dataset.wave===w));}
+function scopeSet(o){for(const k in o){$(k).value=o[k];}syncTrig();trigCache=null;}
+function setCurs(a,b){curs=[a,b];}
+function expText(key){const T=theory(),f=(n)=>{const r=[...T.dc,...T.tr,...T.ac].find(x=>x[0]===n);return r?`${r[1].toFixed(r[2]==="Ω"?1:3)} ${r[2]}`:"";};
+  return {V1:`Expected reading: <b>${f("V1")}</b>`,I1:`Expected reading: <b>${f("I1")}</b>`,I2:`Expected reading: <b>${f("I2")}</b> (negative because of the arrow direction)`,I3:`Expected reading: <b>${f("I3")}</b>`,
+   Voc:`Expected reading: <b>${f("Voc")}</b>`,Isc:`Expected reading: <b>${f("Isc")}</b>`,Rth:`Expected reading: <b>${f("Rth")}</b>`,
+   tau:`Expected: Vc-pp <b>${f("Vc-pp")}</b>, 0.63·Vc <b>${f("0.63Vc")}</b>, τ <b>${f("τ")}</b>. Open the Computer screen (key 2) to read it.`,
+   ac:`Expected: |Vc| <b>${f("|Vc|")}</b>, dT <b>${f("Δt")}</b>, phase <b>${f("Phase")}</b>. Open the Computer screen (key 2) to read it.`}[key];}
+function runGuide(key){const g=GUIDES[key];if(!g)return;
+  if(part!==g.part)document.querySelector(`[data-part="${g.part}"]`).click();
+  autoBuild();g.do();recompute();
+  $("gTitle").textContent="Guided setup · "+g.title;$("gSteps").innerHTML=g.steps.map(x=>`<li>${x}</li>`).join("");$("gExp").innerHTML=expText(g.exp)+` <span style="color:var(--muted)">This replaced your own build; press Reset to start fresh.</span>`;
+  const intact=key==="V1"||key==="tau"||key==="ac";
+  $("checkOut").dataset.live="";$("checkOut").innerHTML=intact?'<div class="ok">✓ Circuit matches the schematic.</div>':'<span class="empty">The circuit is changed on purpose for this measurement (branch broken, RL removed or source shorted), so Check circuit is paused. Press Reset or Auto-build to restore it.</span>';
+  $("guide").hidden=false;track("guide-"+key);}
+$("guideSel").addEventListener("change",e=>{runGuide(e.target.value);e.target.value="";});
+$("gClose").onclick=()=>$("guide").hidden=true;
 // ---------- shell: swatches, theme, keyboard ----------
 document.querySelectorAll("[data-sw]").forEach(b=>b.onclick=()=>{$("wColor").value=b.dataset.sw;document.querySelectorAll("[data-sw]").forEach(x=>x.setAttribute("aria-pressed",x===b));});
 document.addEventListener("keydown",e=>{if(/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)||e.metaKey||e.ctrlKey||e.altKey)return;
