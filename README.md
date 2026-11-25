@@ -49,10 +49,10 @@
 
 | Project | Description | Links |
 |---|---|---|
-| [**ELE 211L Lab Simulator**](vibe-coded/ele211-lab-simulator) | A 3D NI ELVIS II+ bench in the browser: wire a breadboard, probe with the DMM and scope, and run DC, RC-transient and AC experiments with a real circuit solver | [▶ Live demo](https://3hsann.github.io/3HSANN/vibe-coded/ele211-lab-simulator/) · [Source](vibe-coded/ele211-lab-simulator) |
+| [**ELVISim**](https://github.com/3HSANN/elvisim) | A 3D NI ELVIS II+ lab bench in the browser for ELE 211L: wire a breadboard laid out like the schematic, probe with the DMM and scope, and run DC, RC-transient and AC experiments with a real circuit solver | [▶ Live demo](https://3hsann.github.io/elvisim/) · [Source](https://github.com/3HSANN/elvisim) |
 
 <p align="center">
-  <a href="https://3hsann.github.io/3HSANN/vibe-coded/ele211-lab-simulator/"><img src="vibe-coded/ele211-lab-simulator/preview.png" width="720" alt="ELE 211L Lab Simulator: 3D NI ELVIS II+ bench"/></a>
+  <a href="https://3hsann.github.io/elvisim/"><img src="https://3hsann.github.io/elvisim/assets/preview.jpg" width="720" alt="ELVISim: 3D NI ELVIS II+ lab bench"/></a>
 </p>
 
 ### 📈 GitHub stats
